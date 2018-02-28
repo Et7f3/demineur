@@ -2,7 +2,8 @@ CC=gcc
 CFLAGS=-Wall -Wextra -ansi -Wwrite-strings -Wstrict-prototypes\
  -Wno-self-assign -Wuninitialized -Wunreachable-code          \
  -Wno-unused-parameter -I..\SDL2-2.0.7\i686-w64-mingw32\include
-LDFLAGS=-L..\SDL2-2.0.7\i686-w64-mingw32\lib -lmingw32 -lSDL2main -lSDL2
+LDFLAGS=-L..\SDL2-2.0.7\i686-w64-mingw32\lib -lmingw32 -lSDL2main -lSDL2\
+ -lSDL2.dll
 SRC      = $(wildcard src/*.c)
 OBJ      = $(SRC:src/%.c=obj/%.o)
 EXECUTABLE_NAME=demin
