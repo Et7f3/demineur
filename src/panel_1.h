@@ -4,4 +4,5 @@
 #  include "main.h"
 
 extern int               panel_1(SDL_Event * evt);
+extern int               view_1(SDL_Window * wind);
 #endif
