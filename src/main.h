@@ -5,4 +5,8 @@
 #  include "stdlib.h"
 #  include "stdio.h"
 
+#  include "panel_default.h"
+#  include "panel_1.h"
+
+extern int               (*gl_panel_current) (SDL_Event * evt);
 #endif

@@ -1,10 +1,14 @@
 #include "main.h"
 
+int                      (*gl_panel_current) (SDL_Event * evt);
+
 int main(int argc, char **argv)
 {
 	SDL_Window              *wind;
 	SDL_Event                evt;
-	int                      run = 1;
+	int                      run;
+	run = 1;
+	gl_panel_current = panel_1;
 	/* Initialisation simple */
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		fprintf(stdout, "Échec de l'initialisation de la SDL (%s)\n",
@@ -17,12 +21,11 @@ int main(int argc, char **argv)
 	{
 		while (run)
 		{
-			SDL_WaitEvent(&evt);
-			switch (evt.type)
-			{
-			case SDL_QUIT:
-				run = 0;
-			}
+			if (!SDL_WaitEvent(&evt))
+				fprintf(stdout,
+								"la SDL n'a pas pu obtenir une evenemnt de la file (%s)\n",
+								SDL_GetError());
+			run = gl_panel_current(&evt);
 		}
 		SDL_DestroyWindow(wind);
 	}
