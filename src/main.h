@@ -5,10 +5,15 @@
 #  include "stdlib.h"
 #  include "stdio.h"
 
+#  define NOMBRE_SPRITE 15
+
 #  include "panel_default.h"
 #  include "panel_1.h"
 
 extern int               (*gl_panel_current) (SDL_Event * evt);
 extern int               (*gl_view_current) (SDL_Window * wind);
-extern SDL_Window       *wind;
+
+extern SDL_Surface      *gl_tuile[NOMBRE_SPRITE];
+
+extern int               load_sprite(SDL_Window * wind);
 #endif
