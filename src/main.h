@@ -9,6 +9,7 @@
 
 #  include "panel_default.h"
 #  include "panel_1.h"
+#  include "panel_2.h"
 
 extern int               (*gl_panel_current) (SDL_Event * evt);
 extern int               (*gl_view_current) (SDL_Window * wind);

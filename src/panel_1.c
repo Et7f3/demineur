@@ -4,6 +4,20 @@ int panel_1(SDL_Event * evt)
 {
 	switch (evt->type)
 	{
+	case SDL_MOUSEBUTTONUP:
+		if (155 <= evt->button.x && evt->button.x <= 290)
+		{
+			if (205 <= evt->button.y && evt->button.y <= 240)
+			{
+				gl_panel_current = panel_2;
+				gl_view_current = view_2;
+			}
+			if (275 <= evt->button.y && evt->button.y <= 320)
+				return 0;
+		}
+		break;
+	default:
+		break;
 	}
 	return panel_default(evt);
 }
