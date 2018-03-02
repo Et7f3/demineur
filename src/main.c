@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 	SDL_Event                evt;
 	int                      run;
 	SDL_Window              *wind;
+	srand(time(NULL));
 	gl_panel_current = panel_1;
 	gl_view_current = view_1;
 	int                      clean_id;
@@ -50,6 +51,20 @@ int load_sprite(SDL_Window * wind)
 	int                      j;
 	char                     nom_image[14] = "img\\vide0.bmp";
 	i = 0;
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\jouer.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[0], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
+
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\quitter.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[1], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
+
 	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\bombe.bmp")))
 		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
 						SDL_GetError());
@@ -58,20 +73,6 @@ int load_sprite(SDL_Window * wind)
 		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
 						SDL_GetError());
 
-	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\jouer.bmp")))
-		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
-						SDL_GetError());
-	SDL_SetColorKey(gl_tuile[2], SDL_TRUE,
-									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
-														 0xff));
-
-	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\quitter.bmp")))
-		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
-						SDL_GetError());
-	SDL_SetColorKey(gl_tuile[3], SDL_TRUE,
-									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
-														 0xff));
-
 	for (j = 0; j <= 9; j++)
 	{
 		nom_image[8] = j + '0';
@@ -79,5 +80,17 @@ int load_sprite(SDL_Window * wind)
 			fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
 							SDL_GetError());
 	}
+
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\drapeau.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\bravo.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[15], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
+
 	return 1;
 }

@@ -4,8 +4,10 @@
 #  include "SDL2/SDL.h"
 #  include "stdlib.h"
 #  include "stdio.h"
+#  include "string.h"
+#  include "time.h"
 
-#  define NOMBRE_SPRITE 15
+#  define NOMBRE_SPRITE 17
 
 #  include "panel_default.h"
 #  include "panel_1.h"

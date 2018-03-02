@@ -11,6 +11,7 @@ int panel_1(SDL_Event * evt)
 			{
 				gl_panel_current = panel_2;
 				gl_view_current = view_2;
+				view_2_init();
 			}
 			if (275 <= evt->button.y && evt->button.y <= 320)
 				return 0;
@@ -29,9 +30,9 @@ int view_1(SDL_Window * wind)
 	dstrect.y = 205;
 	view_default(wind);
 	/*jour = 2,quitter=3 */
-	SDL_BlitSurface(gl_tuile[2], NULL, SDL_GetWindowSurface(wind), &dstrect);
+	SDL_BlitSurface(gl_tuile[0], NULL, SDL_GetWindowSurface(wind), &dstrect);
 
 	dstrect.y = 275;
-	SDL_BlitSurface(gl_tuile[3], NULL, SDL_GetWindowSurface(wind), &dstrect);
+	SDL_BlitSurface(gl_tuile[1], NULL, SDL_GetWindowSurface(wind), &dstrect);
 	return 1;
 }
