@@ -14,6 +14,7 @@ static unsigned char     tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
 
 int                      combien_de_bombe(int x, int y);
 int                      clic_tuile(int x, int y);
+int                      gl_perdu;
 
 int panel_2(SDL_Event * evt)
 {
@@ -23,11 +24,19 @@ int panel_2(SDL_Event * evt)
 	{
 	case SDL_MOUSEBUTTONUP:
 		if (50 <= evt->button.x && evt->button.x <= 395 && 100 <= evt->button.y
-				&& evt->button.y <= 445)
+				&& evt->button.y <= 445 && !gl_perdu)
 		{
 			x = (evt->button.x - 50) / 35;
 			y = (evt->button.y - 100) / 35;
 			clic_tuile(x, y);
+		}
+		if (472 <= evt->button.y && evt->button.y <= 517 && 155 <= evt->button.x
+				&& evt->button.x <= 290)
+		{
+			if (gl_perdu)
+				view_2_init();
+			else
+				return 0;
 		}
 		break;
 	default:
@@ -41,6 +50,7 @@ int view_2_init(void)
 	int                      x;
 	int                      y;
 	int                      cnt;
+	gl_perdu = 0;
 	memset(tab, TUILE_SANS_RIEN, 100);
 	for (cnt = 0; cnt < 10;)
 	{
@@ -80,14 +90,27 @@ int view_2(SDL_Window * wind)
 												SDL_GetWindowSurface(wind), &dstrect);
 		}
 
-	for (x = 0; x < 10 && fin; x++)
-		for (y = 0; y < 10 && fin; y++)
+	dstrect.x = 155;
+	dstrect.y = 472;
+
+	SDL_BlitSurface(gl_tuile[((gl_perdu) ? 17 : 1)], NULL,
+									SDL_GetWindowSurface(wind), &dstrect);
+
+	dstrect.x = 155;
+	dstrect.y = 30;
+
+	for (x = 0; x < 10; x++)
+		for (y = 0; y < 10; y++)
 		{
 			if (cell(x, y) == TUILE_SANS_RIEN || cell(x, y) == TUILE_BOMBE_VISIBLE)
 				fin = 0;
+			if (cell(x, y) == TUILE_BOMBE_VISIBLE)
+			{
+				SDL_BlitSurface(gl_tuile[16], NULL, SDL_GetWindowSurface(wind),
+												&dstrect);
+				gl_perdu = 1;
+			}
 		}
-	dstrect.x = 155;
-	dstrect.y = 30;
 	if (fin)
 		SDL_BlitSurface(gl_tuile[15], NULL, SDL_GetWindowSurface(wind), &dstrect);
 

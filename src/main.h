@@ -7,7 +7,7 @@
 #  include "string.h"
 #  include "time.h"
 
-#  define NOMBRE_SPRITE 17
+#  define NOMBRE_SPRITE 19
 
 #  include "panel_default.h"
 #  include "panel_1.h"

@@ -92,5 +92,18 @@ int load_sprite(SDL_Window * wind)
 									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
 														 0xff));
 
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\perdu.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[16], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
+
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\recommencer.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[17], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
 	return 1;
 }
