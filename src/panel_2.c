@@ -56,7 +56,7 @@ int view_2_init(void)
 	int                      cnt;
 	gl_perdu = 0;
 	memset(tab, 0, 100);
-	for (cnt = 0; cnt < 1;)
+	for (cnt = 0; cnt < 12;)
 	{
 		x = rand() % 10;
 		y = rand() % 10;

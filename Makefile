@@ -4,20 +4,22 @@ CFLAGS=-Wall -Wextra -ansi -Wwrite-strings -Wstrict-prototypes\
  -Wno-unused-parameter -I..\SDL2-2.0.7\i686-w64-mingw32\include -std=c89
 LDFLAGS=-L..\SDL2-2.0.7\i686-w64-mingw32\lib -lmingw32 -lSDL2main -lSDL2\
  -lSDL2.dll
-SRC      = $(wildcard src/*.c)
-OBJ      = $(SRC:src/%.c=obj/%.o)
-EXECUTABLE_NAME=demin
-OUT_DIR=bin\\
+SRC             =$(wildcard src/*.c)
+EXECUTABLE_NAME =demin
+OUT_DIR         =bin\\
 
-ifeq ($(DEBUG),no)
-CFLAGS+= -O
-else
-CFLAGS+= -ggdb -O0
-LDFLAGS+= -DDEBUG
-EXECUTABLE_NAME:=$(EXECUTABLE_NAME).debug
-endif
+final: CFLAGS += -O
 
-all: $(OBJ)
+debug: CFLAGS          += -ggdb -O0
+debug: LDFLAGS         += -DDEBUG
+debug: EXECUTABLE_NAME :=$(EXECUTABLE_NAME).debug
+
+all: final
+
+debug: $(SRC:src/%.c=obj/debug/%.o)
+	$(CC) -o $(OUT_DIR)$(EXECUTABLE_NAME).exe $^ $(CFLAGS) $(LDFLAGS)
+
+final: $(SRC:src/%.c=obj/final/%.o)
 	$(CC) -o $(OUT_DIR)$(EXECUTABLE_NAME).exe $^ $(CFLAGS) $(LDFLAGS)
 
 indent: $(wildcard src/*.c) $(wildcard src/*.h)
@@ -27,11 +29,14 @@ indent: $(wildcard src/*.c) $(wildcard src/*.h)
 
 test: $(wildcard test/*.c:test/%.c=obj/%.o)
 
-obj/%.o: src/%.c
+obj/final/%.o: src/%.c
+	$(CC) -c $< -o $@ $(CFLAGS) $(LDFLAGS)
+
+obj/debug/%.o: src/%.c
 	$(CC) -c $< -o $@ $(CFLAGS) $(LDFLAGS)
 
 clean:
-	del obj\*.o src\*~
+	del obj\final\*.o obj\debug\*.o src\*~
 
 distclean: clean
-	del  bin\*.exe
+	del  bin\*.exe bin\*.zip
