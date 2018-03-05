@@ -84,6 +84,9 @@ int load_sprite(SDL_Window * wind)
 	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\drapeau.bmp")))
 		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
 						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[14], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
 
 	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\bravo.bmp")))
 		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
@@ -103,6 +106,13 @@ int load_sprite(SDL_Window * wind)
 		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
 						SDL_GetError());
 	SDL_SetColorKey(gl_tuile[17], SDL_TRUE,
+									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
+														 0xff));
+
+	if (!(gl_tuile[i++] = SDL_LoadBMP("img\\doute.bmp")))
+		fprintf(stderr, "la SDL n'a pas pu charger l'image (%s)\n",
+						SDL_GetError());
+	SDL_SetColorKey(gl_tuile[18], SDL_TRUE,
 									SDL_MapRGB(SDL_GetWindowSurface(wind)->format, 0xff, 0xff,
 														 0xff));
 	return 1;

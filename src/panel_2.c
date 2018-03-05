@@ -14,6 +14,7 @@ static unsigned char     tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
 
 int                      combien_de_bombe(int x, int y);
 int                      clic_tuile(int x, int y);
+int                      deposer_tuile(int x, int y);
 int                      gl_perdu;
 
 int panel_2(SDL_Event * evt)
@@ -28,7 +29,10 @@ int panel_2(SDL_Event * evt)
 		{
 			x = (evt->button.x - 50) / 35;
 			y = (evt->button.y - 100) / 35;
-			clic_tuile(x, y);
+			if (evt->button.button == SDL_BUTTON_LEFT)
+				clic_tuile(x, y);
+			else if (evt->button.button == SDL_BUTTON_RIGHT)
+				deposer_tuile(x, y);
 		}
 		if (472 <= evt->button.y && evt->button.y <= 517 && 155 <= evt->button.x
 				&& evt->button.x <= 290)
@@ -88,6 +92,9 @@ int view_2(SDL_Window * wind)
 												&dstrect);
 			if (cell(x, y) & TUILE_DRAPEAU)
 				SDL_BlitSurface(gl_tuile[14], NULL, SDL_GetWindowSurface(wind),
+												&dstrect);
+			if (cell(x, y) & TUILE_DOUTE)
+				SDL_BlitSurface(gl_tuile[18], NULL, SDL_GetWindowSurface(wind),
 												&dstrect);
 		}
 
@@ -158,12 +165,12 @@ int clic_tuile(int x, int y)
 	int                      c;
 	c = 0;
 	if (x < 0 || x > CASE_PAR_LIGNE - 1 || y < 0 || y > CASE_PAR_COLONNE - 1)
-		return c;
+		return (-1);
 
 	if (cell(x, y) & TUILE_DOUTE)
-		cell_flag(x, y, TUILE_DOUTE | TUILE_DRAPEAU);
+		return (c);
 	else if (cell(x, y) & TUILE_DRAPEAU)
-		cell_flag(x, y, TUILE_DRAPEAU);
+		return (c);
 	else if (!(cell(x, y) & TUILE_VISIBLE))
 	{
 		cell_flag(x, y, TUILE_VISIBLE);
@@ -176,7 +183,22 @@ int clic_tuile(int x, int y)
 				clic_tuile(x + 1, y) + clic_tuile(x + 1, y + 1);
 	}
 
-	return c;
+	return (c);
+}
+
+int deposer_tuile(int x, int y)
+{
+	if (x < 0 || x > CASE_PAR_LIGNE - 1 || y < 0 || y > CASE_PAR_COLONNE - 1)
+		return (-1);
+
+	if (!(cell(x, y) & TUILE_VISIBLE)
+			&& !(cell(x, y) & (TUILE_DRAPEAU | TUILE_DOUTE)))
+		cell_flag(x, y, TUILE_DRAPEAU);
+	else if (!(cell(x, y) & TUILE_VISIBLE) && (cell(x, y) & TUILE_DRAPEAU))
+		cell_flag(x, y, TUILE_DOUTE | TUILE_DRAPEAU);
+	else if (!(cell(x, y) & TUILE_VISIBLE) && (cell(x, y) & TUILE_DOUTE))
+		cell_flag(x, y, TUILE_DOUTE);
+	return 1;
 }
 
 #undef CASE_PAR_LIGNE
