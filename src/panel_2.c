@@ -5,11 +5,11 @@
 static unsigned char     tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
 #define cell(x, y) (tab[y][x])
 #define cell_value(x, y, v) (tab[y][x] = v)
-#define TUILE_BOMBE 1
-#define TUILE_BOMBE_VISIBLE (2 | TUILE_BOMBE)
-#define TUILE_SANS_RIEN 4
-#define TUILE_VIDE 8
-#define TUILE_DRAPEAU 16
+#define cell_flag(x, y, f) (tab[y][x] ^= f)
+#define TUILE_VISIBLE 1
+#define TUILE_BOMBE 2
+#define TUILE_DRAPEAU 4
+#define TUILE_DOUTE 8
 
 
 int                      combien_de_bombe(int x, int y);
@@ -51,15 +51,15 @@ int view_2_init(void)
 	int                      y;
 	int                      cnt;
 	gl_perdu = 0;
-	memset(tab, TUILE_SANS_RIEN, 100);
-	for (cnt = 0; cnt < 10;)
+	memset(tab, 0, 100);
+	for (cnt = 0; cnt < 1;)
 	{
 		x = rand() % 10;
 		y = rand() % 10;
-		if (cell(x, y) != TUILE_BOMBE)
-			cnt++, cell_value(x, y, TUILE_BOMBE);
+		if (!(cell(x, y) & TUILE_BOMBE))
+			cnt++, cell_flag(x, y, TUILE_BOMBE);
 	}
-	cell_value(0, 0, TUILE_BOMBE);
+	cell_flag(0, 0, TUILE_BOMBE | TUILE_DRAPEAU);
 
 	return 1;
 }
@@ -76,18 +76,19 @@ int view_2(SDL_Window * wind)
 		{
 			dstrect.x = 50 + x * 35;
 			dstrect.y = 100 + y * 35;
-			if (cell(x, y) == TUILE_SANS_RIEN || cell(x, y) == TUILE_BOMBE)
+			if (cell(x, y) & TUILE_VISIBLE)
+				if (cell(x, y) & TUILE_BOMBE)
+					SDL_BlitSurface(gl_tuile[2], NULL, SDL_GetWindowSurface(wind),
+													&dstrect);
+				else
+					SDL_BlitSurface(gl_tuile[4 + combien_de_bombe(x, y)], NULL,
+													SDL_GetWindowSurface(wind), &dstrect);
+			else
 				SDL_BlitSurface(gl_tuile[3], NULL, SDL_GetWindowSurface(wind),
 												&dstrect);
-			else if (cell(x, y) == TUILE_BOMBE_VISIBLE)
-				SDL_BlitSurface(gl_tuile[2], NULL, SDL_GetWindowSurface(wind),
-												&dstrect);
-			else if (cell(x, y) == TUILE_DRAPEAU)
+			if (cell(x, y) & TUILE_DRAPEAU)
 				SDL_BlitSurface(gl_tuile[14], NULL, SDL_GetWindowSurface(wind),
 												&dstrect);
-			else
-				SDL_BlitSurface(gl_tuile[4 + combien_de_bombe(x, y)], NULL,
-												SDL_GetWindowSurface(wind), &dstrect);
 		}
 
 	dstrect.x = 155;
@@ -102,13 +103,14 @@ int view_2(SDL_Window * wind)
 	for (x = 0; x < 10; x++)
 		for (y = 0; y < 10; y++)
 		{
-			if (cell(x, y) == TUILE_SANS_RIEN || cell(x, y) == TUILE_BOMBE_VISIBLE)
+			if (!(cell(x, y) & (TUILE_VISIBLE | TUILE_BOMBE)))
 				fin = 0;
-			if (cell(x, y) == TUILE_BOMBE_VISIBLE)
+			if ((cell(x, y) & TUILE_BOMBE) && (cell(x, y) & TUILE_VISIBLE))
 			{
 				SDL_BlitSurface(gl_tuile[16], NULL, SDL_GetWindowSurface(wind),
 												&dstrect);
 				gl_perdu = 1;
+				fin = 0;
 			}
 		}
 	if (fin)
@@ -123,30 +125,30 @@ int combien_de_bombe(int x, int y)
 	if (x > 0)
 	{
 		if (y > 0)
-			c += (TUILE_BOMBE & cell(x - 1, y - 1));
+			c += ! !(TUILE_BOMBE & cell(x - 1, y - 1));
 
-		c += (TUILE_BOMBE & cell(x - 1, y));
+		c += ! !(TUILE_BOMBE & cell(x - 1, y));
 
 		if (y < CASE_PAR_COLONNE - 1)
-			c += (TUILE_BOMBE & cell(x - 1, y + 1));
+			c += ! !(TUILE_BOMBE & cell(x - 1, y + 1));
 	}
 
 	if (x < CASE_PAR_LIGNE - 1)
 	{
 		if (y > 0)
-			c += (TUILE_BOMBE & cell(x + 1, y - 1));
+			c += ! !(TUILE_BOMBE & cell(x + 1, y - 1));
 
-		c += (TUILE_BOMBE & cell(x + 1, y));
+		c += ! !(TUILE_BOMBE & cell(x + 1, y));
 
 		if (y < CASE_PAR_COLONNE - 1)
-			c += (TUILE_BOMBE & cell(x + 1, y + 1));
+			c += ! !(TUILE_BOMBE & cell(x + 1, y + 1));
 	}
 
 	if (y > 0)
-		c += (TUILE_BOMBE & cell(x, y - 1));
+		c += ! !(TUILE_BOMBE & cell(x, y - 1));
 
 	if (y < CASE_PAR_COLONNE - 1)
-		c += (TUILE_BOMBE & cell(x, y + 1));
+		c += ! !(TUILE_BOMBE & cell(x, y + 1));
 
 	return c;
 }
@@ -157,24 +159,23 @@ int clic_tuile(int x, int y)
 	c = 0;
 	if (x < 0 || x > CASE_PAR_LIGNE - 1 || y < 0 || y > CASE_PAR_COLONNE - 1)
 		return c;
-	switch (cell(x, y))
+
+	if (cell(x, y) & TUILE_DOUTE)
+		cell_flag(x, y, TUILE_DOUTE | TUILE_DRAPEAU);
+	else if (cell(x, y) & TUILE_DRAPEAU)
+		cell_flag(x, y, TUILE_DRAPEAU);
+	else if (!(cell(x, y) & TUILE_VISIBLE))
 	{
-	case TUILE_SANS_RIEN:
-		cell_value(x, y, TUILE_VIDE);
-		if (!combien_de_bombe(x, y))
-		{
+		cell_flag(x, y, TUILE_VISIBLE);
+		if (!(cell(x, y) & TUILE_BOMBE) && !combien_de_bombe(x, y))
 			c +=
 				clic_tuile(x - 1, y - 1) + clic_tuile(x - 1, y) + clic_tuile(x - 1,
 																																		 y + 1) +
 				clic_tuile(x, y - 1) + clic_tuile(x, y + 1) + clic_tuile(x + 1,
 																																 y - 1) +
 				clic_tuile(x + 1, y) + clic_tuile(x + 1, y + 1);
-		}
-		break;
-	case TUILE_BOMBE:
-		cell_value(x, y, TUILE_BOMBE_VISIBLE);
-		break;
 	}
+
 	return c;
 }
 
