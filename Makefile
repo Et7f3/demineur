@@ -16,16 +16,25 @@ debug: EXECUTABLE_NAME :=$(EXECUTABLE_NAME).debug
 
 all: final
 
-debug: $(SRC:src/%.c=obj/debug/%.o)
+debug: $(OUT_DIR)$(EXECUTABLE_NAME).debug.exe
+
+$(OUT_DIR)$(EXECUTABLE_NAME).debug.exe: $(SRC:src/%.c=obj/debug/%.o)
 	$(CC) -o $(OUT_DIR)$(EXECUTABLE_NAME).exe $^ $(CFLAGS) $(LDFLAGS)
 
-final: $(SRC:src/%.c=obj/final/%.o)
+final: $(OUT_DIR)$(EXECUTABLE_NAME).exe
+
+$(OUT_DIR)$(EXECUTABLE_NAME).exe: $(SRC:src/%.c=obj/final/%.o)
 	$(CC) -o $(OUT_DIR)$(EXECUTABLE_NAME).exe $^ $(CFLAGS) $(LDFLAGS)
+
+zip: final
+	cd bin && "C:\Program Files\7-Zip\7z.exe" a $(EXECUTABLE_NAME).zip SDL2.dll demin.exe img
 
 indent: $(wildcard src/*.c) $(wildcard src/*.h)
-	c:\msys64\mingw64\bin\indent.exe $^ -bli0 -ppi2 -l79 -lc79 -npsl -bbb -bls -blf -ts2 -nce -bl -npcs -di25
+	c:\msys64\mingw64\bin\indent.exe $^ -bli0 -ppi2 -l79 -lc79 -npsl -bbb \
+	-bls -blf -ts2 -nce -bl -npcs -di25
 
-#/C/msys64/mingw64/bin/indent.exe $^ -bli0 -ppi2 -l79 -lc79 -npsl -bbb -bls -blf -ts2 -nce -bl -npcs -di25
+#/C/msys64/mingw64/bin/indent.exe $^ -bli0 -ppi2 -l79 -lc79 -npsl -bbb \
+-bls -blf -ts2 -nce -bl -npcs -di25
 
 test: $(wildcard test/*.c:test/%.c=obj/%.o)
 
