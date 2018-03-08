@@ -1,20 +1,7 @@
 #include "main.h"
 
-#define CASE_PAR_LIGNE 10
-#define CASE_PAR_COLONNE 10
-static unsigned char     tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
-#define cell(x, y) (tab[y][x])
-#define cell_value(x, y, v) (tab[y][x] = v)
-#define cell_flag(x, y, f) (tab[y][x] ^= f)
-#define TUILE_VISIBLE 1
-#define TUILE_BOMBE 2
-#define TUILE_DRAPEAU 4
-#define TUILE_DOUTE 8
+unsigned char     gl_tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
 
-
-int                      combien_de_bombe(int x, int y);
-int                      clic_tuile(int x, int y);
-int                      deposer_tuile(int x, int y);
 int                      gl_perdu;
 
 int panel_2(SDL_Event * evt)
@@ -55,7 +42,7 @@ int view_2_init(void)
 	int                      y;
 	int                      cnt;
 	gl_perdu = 0;
-	memset(tab, 0, 100);
+	memset(gl_tab, 0, 100);
 	for (cnt = 0; cnt < 12;)
 	{
 		x = rand() % 10;
@@ -125,82 +112,3 @@ int view_2(SDL_Window * wind)
 
 	return 1;
 }
-
-int combien_de_bombe(int x, int y)
-{
-	int                      c = 0;
-	if (x > 0)
-	{
-		if (y > 0)
-			c += ! !(TUILE_BOMBE & cell(x - 1, y - 1));
-
-		c += ! !(TUILE_BOMBE & cell(x - 1, y));
-
-		if (y < CASE_PAR_COLONNE - 1)
-			c += ! !(TUILE_BOMBE & cell(x - 1, y + 1));
-	}
-
-	if (x < CASE_PAR_LIGNE - 1)
-	{
-		if (y > 0)
-			c += ! !(TUILE_BOMBE & cell(x + 1, y - 1));
-
-		c += ! !(TUILE_BOMBE & cell(x + 1, y));
-
-		if (y < CASE_PAR_COLONNE - 1)
-			c += ! !(TUILE_BOMBE & cell(x + 1, y + 1));
-	}
-
-	if (y > 0)
-		c += ! !(TUILE_BOMBE & cell(x, y - 1));
-
-	if (y < CASE_PAR_COLONNE - 1)
-		c += ! !(TUILE_BOMBE & cell(x, y + 1));
-
-	return c;
-}
-
-int clic_tuile(int x, int y)
-{
-	int                      c;
-	c = 0;
-	if (x < 0 || x > CASE_PAR_LIGNE - 1 || y < 0 || y > CASE_PAR_COLONNE - 1)
-		return (-1);
-
-	if (cell(x, y) & TUILE_DOUTE)
-		return (c);
-	else if (cell(x, y) & TUILE_DRAPEAU)
-		return (c);
-	else if (!(cell(x, y) & TUILE_VISIBLE))
-	{
-		cell_flag(x, y, TUILE_VISIBLE);
-		if (!(cell(x, y) & TUILE_BOMBE) && !combien_de_bombe(x, y))
-			c +=
-				clic_tuile(x - 1, y - 1) + clic_tuile(x - 1, y) + clic_tuile(x - 1,
-																																		 y + 1) +
-				clic_tuile(x, y - 1) + clic_tuile(x, y + 1) + clic_tuile(x + 1,
-																																 y - 1) +
-				clic_tuile(x + 1, y) + clic_tuile(x + 1, y + 1);
-	}
-
-	return (c);
-}
-
-int deposer_tuile(int x, int y)
-{
-	if (x < 0 || x > CASE_PAR_LIGNE - 1 || y < 0 || y > CASE_PAR_COLONNE - 1)
-		return (-1);
-
-	if (!(cell(x, y) & TUILE_VISIBLE)
-			&& !(cell(x, y) & (TUILE_DRAPEAU | TUILE_DOUTE)))
-		cell_flag(x, y, TUILE_DRAPEAU);
-	else if (!(cell(x, y) & TUILE_VISIBLE) && (cell(x, y) & TUILE_DRAPEAU))
-		cell_flag(x, y, TUILE_DOUTE | TUILE_DRAPEAU);
-	else if (!(cell(x, y) & TUILE_VISIBLE) && (cell(x, y) & TUILE_DOUTE))
-		cell_flag(x, y, TUILE_DOUTE);
-	return 1;
-}
-
-#undef CASE_PAR_LIGNE
-#undef cell
-#undef cell_value
