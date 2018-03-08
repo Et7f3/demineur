@@ -19,5 +19,4 @@ extern int               view_2(SDL_Window * wind);
 #define CASE_PAR_LIGNE 10
 #define CASE_PAR_COLONNE 10
 extern unsigned char     gl_tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
-extern int gl_perdu;
 #endif
