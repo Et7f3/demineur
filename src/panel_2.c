@@ -1,6 +1,6 @@
 #include "main.h"
 
-unsigned char     gl_tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
+unsigned char            gl_tab[CASE_PAR_LIGNE][CASE_PAR_COLONNE];
 
 int panel_2(SDL_Event * evt)
 {
@@ -39,7 +39,11 @@ int view_2_init(void)
 	int                      cnt;
 
 	memset(gl_tab, 0, 100);
+#ifdef DEBUG
+	for (cnt = 0; cnt < 1;)
+#else
 	for (cnt = 0; cnt < 12;)
+#endif
 	{
 		x = rand() % 10;
 		y = rand() % 10;

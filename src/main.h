@@ -9,7 +9,7 @@
 
 #  define NOMBRE_SPRITE 19
 
-# include "utils.h"
+#  include "utils.h"
 #  include "panel_default.h"
 #  include "panel_1.h"
 #  include "panel_2.h"

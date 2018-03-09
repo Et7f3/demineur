@@ -29,7 +29,6 @@ int view_1(SDL_Window * wind)
 	dstrect.x = 155;
 	dstrect.y = 205;
 	view_default(wind);
-	/*jour = 2,quitter=3 */
 	SDL_BlitSurface(gl_tuile[0], NULL, SDL_GetWindowSurface(wind), &dstrect);
 
 	dstrect.y = 275;

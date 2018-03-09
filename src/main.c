@@ -8,10 +8,10 @@ int main(int argc, char **argv)
 	SDL_Event                evt;
 	int                      run;
 	SDL_Window              *wind;
+	int                      clean_id;
 	srand(time(NULL));
 	gl_panel_current = panel_1;
 	gl_view_current = view_1;
-	int                      clean_id;
 	/* Initialisation simple */
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		fprintf(stdout, "Échec de l'initialisation de la SDL (%s)\n",
